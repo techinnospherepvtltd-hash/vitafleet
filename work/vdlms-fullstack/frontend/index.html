@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vehicle Digital Passport</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">VD</div>
+        <div>
+          <strong>Vehicle Passport</strong>
+          <span>Lifecycle SaaS</span>
+        </div>
+      </div>
+      <nav id="nav">
+        <button class="nav-item active" data-screen="dashboard">Dashboard</button>
+        <button class="nav-item" data-screen="vehicles">Vehicles</button>
+        <button class="nav-item" data-screen="documents">Documents</button>
+        <button class="nav-item" data-screen="repairs">Repairs</button>
+        <button class="nav-item" data-screen="approvals">Approval Matrix</button>
+        <button class="nav-item" data-screen="insurance">Insurance</button>
+        <button class="nav-item" data-screen="sold">Sold Vehicles</button>
+        <button class="nav-item" data-screen="alerts">Alerts</button>
+      </nav>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <h1 id="pageTitle">Fleet Command Dashboard</h1>
+          <p id="pageSubtitle">Single source of truth for every vehicle lifecycle record.</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="refreshBtn">Refresh</button>
+          <button class="btn primary" data-screen="vehicles">Add Vehicle</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="screen active" id="dashboard">
+          <div class="stats" id="dashboardStats"></div>
+          <div class="grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h2>Vehicle Risk Watchlist</h2>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Vehicle</th><th>Belongs To</th><th>Branch</th><th>Status</th><th>Risk</th><th>Next Action</th></tr>
+                  </thead>
+                  <tbody id="watchlistRows"></tbody>
+                </table>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h2>Recent Timeline</h2>
+              </div>
+              <div class="timeline" id="recentTimeline"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="vehicles">
+          <div class="split">
+            <article class="panel">
+              <div class="panel-head"><h2>Vehicle Master</h2></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Registration</th><th>Model</th><th>Asset Belongs To</th><th>Branch</th><th>Status</th><th>Timeline</th></tr></thead>
+                  <tbody id="vehicleRows"></tbody>
+                </table>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><h2>Add Vehicle</h2></div>
+              <form class="form-grid" id="vehicleForm">
+                <label>Registration<input name="registrationNumber" required value="MH14 NEW 2026"></label>
+                <label>Make<input name="make" required value="Tata"></label>
+                <label>Model<input name="model" required value="Winger Ambulance"></label>
+                <label>Asset Belongs To<select name="assetBelongsTo"><option>Own Asset</option><option>Third Party Vendor Asset</option><option>Government Asset</option></select></label>
+                <label>Branch<input name="branch" required value="Pune"></label>
+                <label>Status<select name="status"><option>Active</option><option>Idle</option><option>Under Repair</option><option>Accident</option></select></label>
+                <label>Chassis<input name="chassisNumber" required value="NEWCHASSIS2026"></label>
+                <button class="btn primary" type="submit">Save Vehicle</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="documents">
+          <div class="split">
+            <article class="panel">
+              <div class="panel-head"><h2>Document Vault</h2></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Vehicle</th><th>Type</th><th>Number</th><th>Expiry</th><th>Status</th></tr></thead>
+                  <tbody id="documentRows"></tbody>
+                </table>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><h2>Upload Document</h2></div>
+              <form class="form-grid" id="documentForm">
+                <label>Vehicle<input name="vehicle" required value="MH12 AB 4581"></label>
+                <label>Document Type<select name="type"><option>RC</option><option>Insurance</option><option>Fitness</option><option>PUC</option><option>Repair Invoice</option><option>FIR</option><option>Survey Report</option></select></label>
+                <label>Document Number<input name="number" required value="DOC-NEW-001"></label>
+                <label>Expiry Date<input name="expiryDate" type="date" value="2026-12-31"></label>
+                <label>Upload File<input name="fileName" type="file"></label>
+                <button class="btn primary" type="submit">Upload Document</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="repairs">
+          <div class="split">
+            <article class="panel">
+              <div class="panel-head"><h2>Repair Problems</h2></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Vehicle</th><th>Problem</th><th>Repair Type</th><th>Centre</th><th>Status</th><th>Total</th></tr></thead>
+                  <tbody id="repairRows"></tbody>
+                </table>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><h2>Cost Bifurcation</h2></div>
+              <div class="summary-list" id="costBreakup"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="approvals">
+          <div class="grid">
+            <article class="panel">
+              <div class="panel-head"><h2>Approval Matrix</h2></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Request</th><th>Condition</th><th>Level 1</th><th>Level 2</th><th>Level 3</th><th>SLA</th></tr></thead>
+                  <tbody id="approvalRows"></tbody>
+                </table>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><h2>Pending Approvals</h2></div>
+              <div class="summary-list" id="pendingApprovals"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="insurance">
+          <div class="grid">
+            <article class="panel">
+              <div class="panel-head"><h2>Insurance Policies</h2></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Vehicle</th><th>Insurer</th><th>Policy</th><th>IDV</th><th>Expiry</th><th>Claim</th></tr></thead>
+                  <tbody id="insuranceRows"></tbody>
+                </table>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><h2>Claim Summary</h2></div>
+              <div class="summary-list" id="claimSummary"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="sold">
+          <div class="stats" id="soldStats"></div>
+          <article class="panel">
+            <div class="panel-head"><h2>Vehicles Sold Till Now</h2></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Vehicle</th><th>Purchase Cost</th><th>Sold Date</th><th>Buyer</th><th>Sale Value</th><th>Transfer</th></tr></thead>
+                <tbody id="soldRows"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="screen" id="alerts">
+          <article class="panel">
+            <div class="panel-head"><h2>Alerts</h2></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Due Date</th><th>Vehicle</th><th>Alert</th><th>Priority</th><th>Status</th></tr></thead>
+                <tbody id="alertRows"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

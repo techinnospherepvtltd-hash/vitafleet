@@ -1,0 +1,305 @@
+{
+  "vehicles": [
+    {
+      "id": "veh-1",
+      "registrationNumber": "MH12 AB 4581",
+      "make": "Force",
+      "model": "Traveller Ambulance",
+      "assetBelongsTo": "Own Asset",
+      "branch": "Pune",
+      "status": "Under Repair",
+      "chassisNumber": "MC1E4DFA6N0123456",
+      "risk": "High repair cost",
+      "nextAction": "Approve estimate",
+      "timelineCount": 42
+    },
+    {
+      "id": "veh-2",
+      "registrationNumber": "GJ05 CX 9012",
+      "make": "Tata",
+      "model": "407",
+      "assetBelongsTo": "Third Party Vendor Asset",
+      "branch": "Surat",
+      "status": "Active",
+      "chassisNumber": "MAT453451P0891122",
+      "risk": "Insurance renewal",
+      "nextAction": "Renew policy",
+      "timelineCount": 27
+    },
+    {
+      "id": "veh-3",
+      "registrationNumber": "DL01 EM 2204",
+      "make": "Mahindra",
+      "model": "Bolero",
+      "assetBelongsTo": "Government Asset",
+      "branch": "Delhi",
+      "status": "Accident",
+      "chassisNumber": "MA1ZN2GH9R0238871",
+      "risk": "Claim pending",
+      "nextAction": "Upload survey report",
+      "timelineCount": 33
+    },
+    {
+      "id": "veh-4",
+      "registrationNumber": "KA03 MN 7720",
+      "make": "Ashok Leyland",
+      "model": "Dost",
+      "assetBelongsTo": "Own Asset",
+      "branch": "Bengaluru",
+      "status": "Idle",
+      "chassisNumber": "ALK903821P00981",
+      "risk": "Low utilization",
+      "nextAction": "Review branch allocation",
+      "timelineCount": 19
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-1",
+      "vehicle": "MH12 AB 4581",
+      "type": "Fitness",
+      "number": "FIT-MH-4581",
+      "expiryDate": "2026-07-08",
+      "status": "Due Soon"
+    },
+    {
+      "id": "doc-2",
+      "vehicle": "GJ05 CX 9012",
+      "type": "Insurance",
+      "number": "HDFC-9012",
+      "expiryDate": "2026-07-19",
+      "status": "Due Soon"
+    },
+    {
+      "id": "doc-3",
+      "vehicle": "DL01 EM 2204",
+      "type": "Accident FIR",
+      "number": "FIR-2204-91",
+      "expiryDate": "",
+      "status": "Claim File"
+    },
+    {
+      "id": "doc-4",
+      "vehicle": "KA03 MN 7720",
+      "type": "Repair Invoice",
+      "number": "INV-8821",
+      "expiryDate": "",
+      "status": "Verified"
+    }
+  ],
+  "repairs": [
+    {
+      "id": "rep-1",
+      "vehicle": "MH12 AB 4581",
+      "problem": "Engine overheating and radiator leak",
+      "repairType": "Authorized Service Centre",
+      "serviceCentre": "Apex Motors",
+      "status": "Open",
+      "approvalRequired": "Fleet Manager + Finance",
+      "totalCost": 42800,
+      "costBreakup": {
+        "labour": 8500,
+        "parts": 27900,
+        "towing": 1800,
+        "gst": 4600
+      }
+    },
+    {
+      "id": "rep-2",
+      "vehicle": "DL01 EM 2204",
+      "problem": "Front body damage after accident",
+      "repairType": "Accident Vehicle",
+      "serviceCentre": "Claim Garage",
+      "status": "Survey Pending",
+      "approvalRequired": "Insurance Desk + Director Ops",
+      "totalCost": 148000,
+      "costBreakup": {
+        "labour": 24000,
+        "parts": 98000,
+        "towing": 8000,
+        "gst": 18000
+      }
+    },
+    {
+      "id": "rep-3",
+      "vehicle": "KA03 MN 7720",
+      "problem": "Clutch noise during pickup",
+      "repairType": "On-Street Repair",
+      "serviceCentre": "Mobile Mechanic",
+      "status": "Estimate",
+      "approvalRequired": "Workshop Manager",
+      "totalCost": 18900,
+      "costBreakup": {
+        "labour": 4500,
+        "parts": 11800,
+        "towing": 0,
+        "gst": 2600
+      }
+    }
+  ],
+  "approvals": [
+    {
+      "id": "app-1",
+      "requestType": "Repair",
+      "condition": "Up to INR 25,000",
+      "level1": "Workshop Manager",
+      "level2": "Fleet Manager",
+      "level3": "",
+      "sla": "24 hrs",
+      "status": "Active",
+      "pendingItem": ""
+    },
+    {
+      "id": "app-2",
+      "requestType": "Repair",
+      "condition": "INR 25,001 to INR 1,00,000",
+      "level1": "Workshop Manager",
+      "level2": "Fleet Manager",
+      "level3": "Finance Manager",
+      "sla": "48 hrs",
+      "status": "Pending",
+      "pendingItem": "RO-2026-881 repair estimate"
+    },
+    {
+      "id": "app-3",
+      "requestType": "Accident Repair",
+      "condition": "Any amount",
+      "level1": "Fleet Manager",
+      "level2": "Insurance Desk",
+      "level3": "Director Ops",
+      "sla": "24 hrs",
+      "status": "Pending",
+      "pendingItem": "CLM-DL-2204 claim file"
+    },
+    {
+      "id": "app-4",
+      "requestType": "Vehicle Sale",
+      "condition": "All disposals",
+      "level1": "Fleet Head",
+      "level2": "Finance Head",
+      "level3": "Management",
+      "sla": "72 hrs",
+      "status": "Pending",
+      "pendingItem": "SALE-118 disposal approval"
+    }
+  ],
+  "insurance": [
+    {
+      "id": "ins-1",
+      "vehicle": "MH12 AB 4581",
+      "insurer": "ICICI Lombard",
+      "policyNumber": "ICICI-AMB-2026-8842",
+      "idv": 780000,
+      "expiryDate": "2027-06-26",
+      "claimStatus": "No Claim",
+      "firStatus": "",
+      "surveyStatus": "",
+      "repairEstimate": 0,
+      "expectedSettlement": 0
+    },
+    {
+      "id": "ins-2",
+      "vehicle": "DL01 EM 2204",
+      "insurer": "New India",
+      "policyNumber": "NEWIND-2204-77",
+      "idv": 640000,
+      "expiryDate": "2026-12-20",
+      "claimStatus": "Survey Pending",
+      "firStatus": "Uploaded",
+      "surveyStatus": "Pending",
+      "repairEstimate": 148000,
+      "expectedSettlement": 112000
+    },
+    {
+      "id": "ins-3",
+      "vehicle": "GJ05 CX 9012",
+      "insurer": "HDFC Ergo",
+      "policyNumber": "HDFC-9012",
+      "idv": 910000,
+      "expiryDate": "2026-07-19",
+      "claimStatus": "Renewal Due",
+      "firStatus": "",
+      "surveyStatus": "",
+      "repairEstimate": 0,
+      "expectedSettlement": 0
+    }
+  ],
+  "soldVehicles": [
+    {
+      "id": "sold-1",
+      "vehicle": "MH04 AX 1120",
+      "purchaseCost": 1680000,
+      "soldDate": "2026-05-14",
+      "buyer": "Sharma Motors",
+      "saleValue": 510000,
+      "transferStatus": "Completed"
+    },
+    {
+      "id": "sold-2",
+      "vehicle": "RJ14 BK 4421",
+      "purchaseCost": 1220000,
+      "soldDate": "2026-04-22",
+      "buyer": "Auction Lot 7",
+      "saleValue": 380000,
+      "transferStatus": "NOC Pending"
+    },
+    {
+      "id": "sold-3",
+      "vehicle": "TN09 HM 8852",
+      "purchaseCost": 1840000,
+      "soldDate": "2026-03-11",
+      "buyer": "City Used Vehicles",
+      "saleValue": 625000,
+      "transferStatus": "Transfer Pending"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "alt-1",
+      "dueDate": "2026-07-08",
+      "vehicle": "MH12 AB 4581",
+      "title": "Fitness renewal due",
+      "priority": "High",
+      "status": "Open"
+    },
+    {
+      "id": "alt-2",
+      "dueDate": "2026-07-19",
+      "vehicle": "GJ05 CX 9012",
+      "title": "Insurance renewal due",
+      "priority": "Medium",
+      "status": "Open"
+    },
+    {
+      "id": "alt-3",
+      "dueDate": "2026-06-30",
+      "vehicle": "DL01 EM 2204",
+      "title": "Survey report pending",
+      "priority": "High",
+      "status": "Open"
+    }
+  ],
+  "timeline": [
+    {
+      "id": "tl-1",
+      "vehicleId": "veh-1",
+      "date": "2026-06-27",
+      "title": "Insurance policy renewed",
+      "description": "Policy ICICI-AMB-2026-8842 uploaded with IDV INR 7,80,000."
+    },
+    {
+      "id": "tl-2",
+      "vehicleId": "veh-1",
+      "date": "2026-06-21",
+      "title": "Repair order opened",
+      "description": "Engine overheating. Vehicle moved to Apex Motors."
+    },
+    {
+      "id": "tl-3",
+      "vehicleId": "veh-1",
+      "date": "2026-05-12",
+      "title": "Battery replaced",
+      "description": "New Exide battery installed with warranty."
+    }
+  ]
+}

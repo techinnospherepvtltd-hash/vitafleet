@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vehicle Digital Passport Prototype</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --green: #16794c;
+      --red: #b42318;
+      --amber: #a15c07;
+      --blue: #175cd3;
+      --cyan: #0e7490;
+      --shadow: 0 8px 24px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      letter-spacing: 0;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px 1fr;
+    }
+
+    aside {
+      background: #111827;
+      color: #f9fafb;
+      padding: 20px 16px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 4px 6px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      background: #2dd4bf;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .brand strong { display: block; font-size: 15px; }
+    .brand span { color: #bac4d3; font-size: 12px; }
+
+    nav { padding-top: 18px; }
+
+    .nav-item {
+      width: 100%;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 6px;
+      padding: 9px 10px;
+      background: transparent;
+      color: #d8dee9;
+      text-align: left;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav-item.active,
+    .nav-item:hover { background: #263244; color: #fff; }
+
+    .nav-ico {
+      width: 20px;
+      text-align: center;
+      font-weight: 700;
+      color: #5eead4;
+    }
+
+    main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      min-height: 70px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.2;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      min-height: 36px;
+      border-radius: 6px;
+      padding: 0 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      background: #0f766e;
+      border-color: #0f766e;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 20px 24px 28px;
+      overflow: auto;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      min-height: 92px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .stat small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(320px, .8fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+      font-size: 13px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 11px 14px;
+      border-bottom: 1px solid #edf0f5;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      background: #fbfcfe;
+      font-weight: 700;
+    }
+
+    tr:hover td { background: #fbfcfe; }
+
+    .link-btn {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      padding: 0;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .ok { color: var(--green); background: #ecfdf3; border-color: #abefc6; }
+    .warn { color: var(--amber); background: #fffaeb; border-color: #fedf89; }
+    .bad { color: var(--red); background: #fef3f2; border-color: #fecdca; }
+    .info { color: var(--cyan); background: #ecfeff; border-color: #a5f3fc; }
+
+    .timeline {
+      padding: 8px 16px 16px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .event:last-child { border-bottom: 0; }
+
+    .event-time {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .event-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .event-body {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .vehicle-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .vehicle-id {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .vehicle-id h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .qr {
+      width: 118px;
+      height: 118px;
+      background:
+        linear-gradient(90deg, #111 10px, transparent 10px) 0 0 / 20px 20px,
+        linear-gradient(#111 10px, transparent 10px) 0 0 / 20px 20px,
+        #fff;
+      border: 8px solid #fff;
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 12px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 6px;
+      min-height: 34px;
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .tab.active {
+      border-color: #0f766e;
+      background: #ccfbf1;
+      color: #115e59;
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, .85fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid #edf0f5;
+      font-size: 13px;
+    }
+
+    .summary-row:last-child { border-bottom: 0; }
+
+    .summary-row span { color: var(--muted); }
+    .summary-row strong { text-align: right; }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .wide { grid-column: 1 / -1; }
+
+    @media (max-width: 1040px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: 10px;
+      }
+      .brand { display: none; }
+      nav {
+        display: flex;
+        gap: 6px;
+        overflow: auto;
+        padding: 0;
+      }
+      .nav-item {
+        width: auto;
+        flex: 0 0 auto;
+      }
+      .stats { grid-template-columns: repeat(2, minmax(130px, 1fr)); }
+      .grid { grid-template-columns: 1fr; }
+      .split { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .actions { justify-content: flex-start; }
+      .content { padding: 14px; }
+      .vehicle-head { grid-template-columns: 1fr; }
+      .qr { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+      table { min-width: 680px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">VD</div>
+        <div>
+          <strong>Vehicle Passport</strong>
+          <span>Enterprise lifecycle system</span>
+        </div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-screen="dashboard"><span class="nav-ico">D</span>Dashboard</button>
+        <button class="nav-item" data-screen="vehicles"><span class="nav-ico">V</span>Vehicles</button>
+        <button class="nav-item" data-screen="vehicleDetail"><span class="nav-ico">T</span>Timeline</button>
+        <button class="nav-item" data-screen="documents"><span class="nav-ico">F</span>Documents</button>
+        <button class="nav-item" data-screen="repairs"><span class="nav-ico">R</span>Repairs</button>
+        <button class="nav-item" data-screen="approvals"><span class="nav-ico">M</span>Approvals</button>
+        <button class="nav-item" data-screen="insurance"><span class="nav-ico">I</span>Insurance</button>
+        <button class="nav-item" data-screen="soldVehicles"><span class="nav-ico">S</span>Sold</button>
+        <button class="nav-item" data-screen="alerts"><span class="nav-ico">A</span>Alerts</button>
+      </nav>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <h1 id="pageTitle">Fleet Command Dashboard</h1>
+          <div class="sub" id="pageSub">10,000 vehicle enterprise view across branches, compliance, repairs, and documents.</div>
+        </div>
+        <div class="actions">
+          <button class="btn">Import CSV</button>
+          <button class="btn">Export</button>
+          <button class="btn primary" data-screen="addVehicle">Add Vehicle</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="screen active" id="dashboard">
+          <div class="stats">
+            <div class="stat"><span>Total vehicles</span><strong>10,248</strong><small>Across 18 branches</small></div>
+            <div class="stat"><span>Active</span><strong>8,934</strong><small>87.1 percent</small></div>
+            <div class="stat"><span>Under repair</span><strong>412</strong><small>Avg downtime 3.8 days</small></div>
+            <div class="stat"><span>Accident</span><strong>31</strong><small>12 claims pending</small></div>
+            <div class="stat"><span>Insurance due</span><strong>186</strong><small>Next 30 days</small></div>
+            <div class="stat"><span>Fitness due</span><strong>94</strong><small>Next 30 days</small></div>
+            <div class="stat"><span>Approvals pending</span><strong>47</strong><small>Repair, claim, disposal</small></div>
+            <div class="stat"><span>Vehicles sold</span><strong>286</strong><small>INR 8.42 Cr recovered</small></div>
+            <div class="stat"><span>Accident repairs</span><strong>19</strong><small>On street / spot cases</small></div>
+            <div class="stat"><span>Service center repairs</span><strong>128</strong><small>Authorized workshops</small></div>
+          </div>
+
+          <div class="grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h2 class="panel-title">Vehicle Risk Watchlist</h2>
+                <button class="btn">View All</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Vehicle</th>
+                      <th>Branch</th>
+                      <th>Status</th>
+                      <th>Risk</th>
+                      <th>Next Action</th>
+                      <th>Cost YTD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><button class="link-btn" data-screen="vehicleDetail">MH12 AB 4581</button></td>
+                      <td>Pune</td>
+                      <td><span class="badge bad">Under repair</span></td>
+                      <td>High repair cost</td>
+                      <td>Approve estimate</td>
+                      <td>INR 2,84,000</td>
+                    </tr>
+                    <tr>
+                      <td><button class="link-btn" data-screen="vehicleDetail">GJ05 CX 9012</button></td>
+                      <td>Surat</td>
+                      <td><span class="badge warn">Due soon</span></td>
+                      <td>Fitness expiry</td>
+                      <td>Renew before 2026-07-08</td>
+                      <td>INR 1,18,500</td>
+                    </tr>
+                    <tr>
+                      <td><button class="link-btn" data-screen="vehicleDetail">KA03 MN 7720</button></td>
+                      <td>Bengaluru</td>
+                      <td><span class="badge info">Idle</span></td>
+                      <td>Low utilization</td>
+                      <td>Review assignment</td>
+                      <td>INR 74,200</td>
+                    </tr>
+                    <tr>
+                      <td><button class="link-btn" data-screen="vehicleDetail">DL01 EM 2204</button></td>
+                      <td>Delhi</td>
+                      <td><span class="badge bad">Accident</span></td>
+                      <td>Claim pending</td>
+                      <td>Upload survey report</td>
+                      <td>INR 3,41,750</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2 class="panel-title">Recent Timeline Events</h2>
+              </div>
+              <div class="timeline">
+                <div class="event">
+                  <div class="event-time">Today<br>10:42</div>
+                  <div><div class="event-title">Insurance uploaded</div><div class="event-body">MH12 AB 4581 policy renewed until 2027-06-26.</div></div>
+                </div>
+                <div class="event">
+                  <div class="event-time">Today<br>09:18</div>
+                  <div><div class="event-title">Battery installed</div><div class="event-body">New Exide battery linked with warranty expiry.</div></div>
+                </div>
+                <div class="event">
+                  <div class="event-time">Fri<br>16:05</div>
+                  <div><div class="event-title">Repair estimate approved</div><div class="event-body">Gearbox work approved for GJ05 CX 9012.</div></div>
+                </div>
+                <div class="event">
+                  <div class="event-time">Thu<br>12:30</div>
+                  <div><div class="event-title">Driver assigned</div><div class="event-body">Ramesh Patil assigned to ambulance MH12 AB 4581.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="vehicles">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="panel-title">Vehicle Master</h2>
+              <button class="btn primary" data-screen="addVehicle">Add Vehicle</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Registration</th>
+                    <th>Make / Model</th>
+                    <th>Chassis</th>
+                    <th>Branch</th>
+                    <th>Status</th>
+                    <th>Insurance</th>
+                    <th>Fitness</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><button class="link-btn" data-screen="vehicleDetail">MH12 AB 4581</button></td>
+                    <td>Force Traveller Ambulance</td>
+                    <td>MC1E4DFA6N0123456</td>
+                    <td>Pune</td>
+                    <td><span class="badge bad">Under repair</span></td>
+                    <td><span class="badge ok">Valid</span></td>
+                    <td><span class="badge warn">Due soon</span></td>
+                  </tr>
+                  <tr>
+                    <td><button class="link-btn" data-screen="vehicleDetail">GJ05 CX 9012</button></td>
+                    <td>Tata 407</td>
+                    <td>MAT453451P0891122</td>
+                    <td>Surat</td>
+                    <td><span class="badge ok">Active</span></td>
+                    <td><span class="badge warn">Due soon</span></td>
+                    <td><span class="badge ok">Valid</span></td>
+                  </tr>
+                  <tr>
+                    <td><button class="link-btn" data-screen="vehicleDetail">DL01 EM 2204</button></td>
+                    <td>Mahindra Bolero</td>
+                    <td>MA1ZN2GH9R0238871</td>
+                    <td>Delhi</td>
+                    <td><span class="badge bad">Accident</span></td>
+                    <td><span class="badge ok">Valid</span></td>
+                    <td><span class="badge ok">Valid</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="vehicleDetail">
+          <div class="vehicle-head">
+            <div class="vehicle-id">
+              <h2>MH12 AB 4581</h2>
+              <div class="meta">
+                <span>Force Traveller Ambulance</span>
+                <span>Chassis MC1E4DFA6N0123456</span>
+                <span>Pune Branch</span>
+                <span class="badge bad">Under repair</span>
+              </div>
+            </div>
+            <div class="qr" title="Vehicle QR code"></div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="timelineTab">Timeline</button>
+            <button class="tab" data-tab="docsTab">Documents</button>
+            <button class="tab" data-tab="repairTab">Repairs</button>
+            <button class="tab" data-tab="partsTab">Parts</button>
+          </div>
+
+          <div class="panel vehicle-tab active" id="timelineTab">
+            <div class="panel-head">
+              <h2 class="panel-title">Vehicle Timeline</h2>
+              <button class="btn">Add Event</button>
+            </div>
+            <div class="timeline">
+              <div class="event">
+                <div class="event-time">2026-06-27<br>10:42</div>
+                <div><div class="event-title">Insurance policy renewed</div><div class="event-body">Policy ICICI-AMB-2026-8842 uploaded. IDV INR 7,80,000. Valid until 2027-06-26.</div></div>
+              </div>
+              <div class="event">
+                <div class="event-time">2026-06-21<br>14:10</div>
+                <div><div class="event-title">Repair order opened</div><div class="event-body">Complaint: engine overheating. Vehicle moved to Apex Motors. Estimated downtime 4 days.</div></div>
+              </div>
+              <div class="event">
+                <div class="event-time">2026-05-12<br>09:00</div>
+                <div><div class="event-title">Battery replaced</div><div class="event-body">Old battery removed and new Exide battery installed. Warranty valid for 24 months.</div></div>
+              </div>
+              <div class="event">
+                <div class="event-time">2026-04-02<br>18:30</div>
+                <div><div class="event-title">Driver assigned</div><div class="event-body">Ramesh Patil assigned as primary driver from Pune branch.</div></div>
+              </div>
+              <div class="event">
+                <div class="event-time">2025-11-08<br>11:45</div>
+                <div><div class="event-title">GPS device changed</div><div class="event-body">Vendor changed from Provider A to Provider B. SIM number updated.</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel vehicle-tab" id="docsTab" style="display:none">
+            <div class="panel-head"><h2 class="panel-title">Documents</h2><button class="btn">Upload</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Type</th><th>Number</th><th>Expiry</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Insurance</td><td>ICICI-AMB-2026-8842</td><td>2027-06-26</td><td><span class="badge ok">Valid</span></td></tr>
+                  <tr><td>Fitness</td><td>FIT-MH-4581</td><td>2026-07-08</td><td><span class="badge warn">Due soon</span></td></tr>
+                  <tr><td>PUC</td><td>PUC-99124</td><td>2026-09-12</td><td><span class="badge ok">Valid</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel vehicle-tab" id="repairTab" style="display:none">
+            <div class="panel-head"><h2 class="panel-title">Repairs</h2><button class="btn">New Job Card</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Job Card</th><th>Complaint</th><th>Workshop</th><th>Status</th><th>Total</th></tr></thead>
+                <tbody>
+                  <tr><td>RO-2026-881</td><td>Engine overheating</td><td>Apex Motors</td><td><span class="badge bad">Open</span></td><td>INR 42,800</td></tr>
+                  <tr><td>RO-2026-602</td><td>Brake pad replacement</td><td>Internal Workshop</td><td><span class="badge ok">Closed</span></td><td>INR 11,450</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel vehicle-tab" id="partsTab" style="display:none">
+            <div class="panel-head"><h2 class="panel-title">Parts Passport</h2><button class="btn">Add Part</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Part</th><th>Serial</th><th>Installed</th><th>Warranty</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Battery</td><td>EXD-884201</td><td>2026-05-12</td><td>2028-05-11</td><td><span class="badge ok">Installed</span></td></tr>
+                  <tr><td>Front left tyre</td><td>MRF-FL-6621</td><td>2026-01-17</td><td>2027-01-16</td><td><span class="badge ok">Installed</span></td></tr>
+                  <tr><td>Alternator</td><td>ALT-9122</td><td>2025-12-04</td><td>2026-12-03</td><td><span class="badge ok">Installed</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="addVehicle">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="panel-title">Add Vehicle</h2>
+              <button class="btn primary">Save Vehicle</button>
+            </div>
+            <div class="form-grid">
+              <label>Registration Number<input value="MH12 AB 4581"></label>
+              <label>Chassis Number<input value="MC1E4DFA6N0123456"></label>
+              <label>Engine Number<input value="ENG-4581-22"></label>
+              <label>Make<input value="Force"></label>
+              <label>Model<input value="Traveller Ambulance"></label>
+              <label>Fuel Type<select><option>Diesel</option><option>Petrol</option><option>CNG</option><option>EV</option></select></label>
+              <label>Branch<select><option>Pune</option><option>Surat</option><option>Delhi</option></select></label>
+              <label>Purchase Date<input type="date" value="2024-08-14"></label>
+              <label>Purchase Cost<input value="1800000"></label>
+              <label class="wide">Notes<textarea>ALS ambulance with oxygen system and stretcher accessories received during delivery.</textarea></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="documents">
+          <div class="split">
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Document Vault</h2><button class="btn primary">Upload Document</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Vehicle</th><th>Document</th><th>Number</th><th>Uploaded By</th><th>Expiry</th><th>Status</th></tr></thead>
+                  <tbody>
+                    <tr><td>MH12 AB 4581</td><td>Fitness</td><td>FIT-MH-4581</td><td>Compliance Team</td><td>2026-07-08</td><td><span class="badge warn">Due soon</span></td></tr>
+                    <tr><td>GJ05 CX 9012</td><td>Insurance</td><td>HDFC-9012</td><td>Insurance Desk</td><td>2026-07-19</td><td><span class="badge warn">Due soon</span></td></tr>
+                    <tr><td>DL01 EM 2204</td><td>Accident FIR</td><td>FIR-2204-91</td><td>Field Staff</td><td>-</td><td><span class="badge info">Claim file</span></td></tr>
+                    <tr><td>KA03 MN 7720</td><td>Repair Invoice</td><td>INV-8821</td><td>Workshop</td><td>-</td><td><span class="badge ok">Verified</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Upload Document</h2></div>
+              <div class="form-grid" style="grid-template-columns:1fr">
+                <label>Vehicle<select><option>MH12 AB 4581</option><option>GJ05 CX 9012</option><option>DL01 EM 2204</option></select></label>
+                <label>Document Type<select><option>RC</option><option>Insurance</option><option>Fitness</option><option>PUC</option><option>Repair Invoice</option><option>FIR</option><option>Survey Report</option></select></label>
+                <label>Document Number<input value="FIT-MH-4581"></label>
+                <label>Expiry Date<input type="date" value="2026-07-08"></label>
+                <label>File<input type="file"></label>
+                <button class="btn primary">Upload and Create Alert</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="repairs">
+          <div class="split">
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Repair Orders</h2><button class="btn primary">New Job Card</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Vehicle</th><th>Job Card</th><th>Problem</th><th>Repair Type</th><th>Workshop</th><th>Status</th><th>Total</th></tr></thead>
+                  <tbody>
+                    <tr><td>MH12 AB 4581</td><td>RO-2026-881</td><td>Engine overheating, radiator leak</td><td><span class="badge ok">Authorized service centre</span></td><td>Apex Motors</td><td><span class="badge bad">Open</span></td><td>INR 42,800</td></tr>
+                    <tr><td>DL01 EM 2204</td><td>RO-2026-879</td><td>Front body damage after accident</td><td><span class="badge bad">Accident vehicle</span></td><td>Claim Garage</td><td><span class="badge warn">Survey pending</span></td><td>INR 1,48,000</td></tr>
+                    <tr><td>KA03 MN 7720</td><td>RO-2026-874</td><td>Clutch noise during pickup</td><td><span class="badge info">On-street repair</span></td><td>Mobile Mechanic</td><td><span class="badge warn">Estimate</span></td><td>INR 18,900</td></tr>
+                    <tr><td>GJ05 CX 9012</td><td>RO-2026-822</td><td>Tyre replacement</td><td><span class="badge ok">Authorized vendor</span></td><td>Tyre Zone</td><td><span class="badge ok">Closed</span></td><td>INR 36,400</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Cost Bifurcation</h2></div>
+              <div class="summary-list">
+                <div class="summary-row"><span>Vehicle</span><strong>MH12 AB 4581</strong></div>
+                <div class="summary-row"><span>Labour</span><strong>INR 8,500</strong></div>
+                <div class="summary-row"><span>Parts</span><strong>INR 27,900</strong></div>
+                <div class="summary-row"><span>Outside machining</span><strong>INR 3,200</strong></div>
+                <div class="summary-row"><span>Towing / field visit</span><strong>INR 1,800</strong></div>
+                <div class="summary-row"><span>GST</span><strong>INR 1,400</strong></div>
+                <div class="summary-row"><span>Total estimate</span><strong>INR 42,800</strong></div>
+                <div class="summary-row"><span>Approval required</span><strong>Fleet Manager + Finance</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="approvals">
+          <div class="split">
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Approval Matrix</h2><button class="btn primary">Create Rule</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Request Type</th><th>Amount / Condition</th><th>Level 1</th><th>Level 2</th><th>Level 3</th><th>SLA</th></tr></thead>
+                  <tbody>
+                    <tr><td>Repair</td><td>Up to INR 25,000</td><td>Workshop Manager</td><td>Fleet Manager</td><td>-</td><td>24 hrs</td></tr>
+                    <tr><td>Repair</td><td>INR 25,001 to 1,00,000</td><td>Workshop Manager</td><td>Fleet Manager</td><td>Finance Manager</td><td>48 hrs</td></tr>
+                    <tr><td>Accident repair</td><td>Any amount</td><td>Fleet Manager</td><td>Insurance Desk</td><td>Director Ops</td><td>24 hrs</td></tr>
+                    <tr><td>Vehicle sale</td><td>All disposals</td><td>Fleet Head</td><td>Finance Head</td><td>Management</td><td>72 hrs</td></tr>
+                    <tr><td>Document renewal</td><td>Permit / fitness / tax</td><td>Compliance Manager</td><td>Branch Manager</td><td>-</td><td>24 hrs</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Pending Approvals</h2></div>
+              <div class="summary-list">
+                <div class="summary-row"><span>RO-2026-881</span><strong>Repair estimate INR 42,800</strong></div>
+                <div class="summary-row"><span>CLM-2204</span><strong>Accident claim approval</strong></div>
+                <div class="summary-row"><span>SALE-118</span><strong>Vehicle disposal approval</strong></div>
+                <div class="summary-row"><span>DOC-742</span><strong>Fitness renewal payment</strong></div>
+                <button class="btn primary">Approve Selected</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="insurance">
+          <div class="grid">
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Insurance Policies and Claims</h2><button class="btn primary">Add Policy</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Vehicle</th><th>Policy</th><th>Insurer</th><th>IDV</th><th>Expiry</th><th>Claim Status</th></tr></thead>
+                  <tbody>
+                    <tr><td>MH12 AB 4581</td><td>ICICI-AMB-2026-8842</td><td>ICICI Lombard</td><td>INR 7,80,000</td><td>2027-06-26</td><td><span class="badge ok">No claim</span></td></tr>
+                    <tr><td>DL01 EM 2204</td><td>NEWIND-2204-77</td><td>New India</td><td>INR 6,40,000</td><td>2026-12-20</td><td><span class="badge bad">Survey pending</span></td></tr>
+                    <tr><td>GJ05 CX 9012</td><td>HDFC-9012</td><td>HDFC Ergo</td><td>INR 9,10,000</td><td>2026-07-19</td><td><span class="badge warn">Renewal due</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Claim File</h2></div>
+              <div class="summary-list">
+                <div class="summary-row"><span>Claim No.</span><strong>CLM-DL-2204</strong></div>
+                <div class="summary-row"><span>Accident Date</span><strong>2026-06-18</strong></div>
+                <div class="summary-row"><span>FIR</span><strong>Uploaded</strong></div>
+                <div class="summary-row"><span>Survey Report</span><strong>Pending</strong></div>
+                <div class="summary-row"><span>Repair Estimate</span><strong>INR 1,48,000</strong></div>
+                <div class="summary-row"><span>Expected Settlement</span><strong>INR 1,12,000</strong></div>
+                <div class="summary-row"><span>Downtime</span><strong>8 days</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="soldVehicles">
+          <div class="stats">
+            <div class="stat"><span>Sold till now</span><strong>286</strong><small>From all branches</small></div>
+            <div class="stat"><span>Total sale value</span><strong>INR 8.42 Cr</strong><small>Lifetime recovery</small></div>
+            <div class="stat"><span>This year sold</span><strong>34</strong><small>2026 YTD</small></div>
+            <div class="stat"><span>Pending transfer</span><strong>11</strong><small>RTO documents open</small></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Sold / Disposed Vehicles</h2><button class="btn primary">Record Sale</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Vehicle</th><th>Purchase Cost</th><th>Sold Date</th><th>Buyer</th><th>Sale Value</th><th>Transfer Status</th><th>Final P/L</th></tr></thead>
+                <tbody>
+                  <tr><td>MH04 AX 1120</td><td>INR 16,80,000</td><td>2026-05-14</td><td>Sharma Motors</td><td>INR 5,10,000</td><td><span class="badge ok">Completed</span></td><td>INR -11,70,000</td></tr>
+                  <tr><td>RJ14 BK 4421</td><td>INR 12,20,000</td><td>2026-04-22</td><td>Auction Lot 7</td><td>INR 3,80,000</td><td><span class="badge warn">NOC pending</span></td><td>INR -8,40,000</td></tr>
+                  <tr><td>TN09 HM 8852</td><td>INR 18,40,000</td><td>2026-03-11</td><td>City Used Vehicles</td><td>INR 6,25,000</td><td><span class="badge bad">Transfer pending</span></td><td>INR -12,15,000</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="alerts">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Alerts</h2><button class="btn">Mark Reviewed</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Due Date</th><th>Vehicle</th><th>Alert</th><th>Priority</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>2026-07-08</td><td>MH12 AB 4581</td><td>Fitness renewal due</td><td><span class="badge bad">High</span></td><td>Open</td></tr>
+                  <tr><td>2026-07-19</td><td>GJ05 CX 9012</td><td>Insurance renewal due</td><td><span class="badge warn">Medium</span></td><td>Open</td></tr>
+                  <tr><td>2026-08-01</td><td>KA03 MN 7720</td><td>Battery warranty expiring</td><td><span class="badge info">Low</span></td><td>Open</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const titles = {
+      dashboard: ["Fleet Command Dashboard", "10,000 vehicle enterprise view across branches, compliance, repairs, and documents."],
+      vehicles: ["Vehicle Master", "Permanent identity records for every vehicle."],
+      vehicleDetail: ["Digital Vehicle Passport", "Complete lifecycle timeline for one vehicle."],
+      documents: ["Document Vault", "Documents, expiry dates, and compliance status."],
+      repairs: ["Repairs and Workshops", "Job cards, repair cost, downtime, and parts used."],
+      approvals: ["Approval Matrix", "Repair, insurance, compliance, and disposal approvals with authority levels."],
+      insurance: ["Insurance", "Policies, claims, survey reports, settlements, and renewal risk."],
+      soldVehicles: ["Sold Vehicles", "Vehicles sold till now, buyer records, transfer status, and recovery value."],
+      alerts: ["Alerts", "Upcoming expiry and operational risk reminders."],
+      addVehicle: ["Add Vehicle", "Create a permanent vehicle identity."]
+    };
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.dataset.screen === id);
+      });
+      document.getElementById("pageTitle").textContent = titles[id][0];
+      document.getElementById("pageSub").textContent = titles[id][1];
+    }
+
+    document.querySelectorAll("[data-screen]").forEach(button => {
+      button.addEventListener("click", () => showScreen(button.dataset.screen));
+    });
+
+    document.querySelectorAll(".tab").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+        document.querySelectorAll(".vehicle-tab").forEach(tab => {
+          tab.classList.remove("active");
+          tab.style.display = "none";
+        });
+        button.classList.add("active");
+        const panel = document.getElementById(button.dataset.tab);
+        panel.classList.add("active");
+        panel.style.display = "block";
+      });
+    });
+  </script>
+</body>
+</html>
